@@ -1,5 +1,6 @@
 use rand::Rng;
 
+/*implementar random state*/
 pub fn randfloat(low: f64, high: f64, n: i32) -> Vec<f64> {
     let mut numbers = Vec::new();
     let mut rng = rand::thread_rng();
@@ -20,5 +21,14 @@ pub fn randint(low: i32, high: i32, n: i32) -> Vec<i32> {
     return numbers;
 }
 
-
-/*struct metrics */
+pub mod metrics{
+    pub fn accuracy_score(y_true: Vec<i32>, y_pred: Vec<i32>) -> f64 {
+        let mut correct = 0;
+        for i in 0..y_true.len() {
+            if y_true[i] == y_pred[i] {
+                correct += 1;
+            }
+        }
+        return correct as f64 / y_true.len() as f64;
+    }
+}
