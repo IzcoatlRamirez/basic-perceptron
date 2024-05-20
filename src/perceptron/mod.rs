@@ -1,5 +1,8 @@
 use crate::numbrs;
+use core::str;
 use numbrs::randfloat;
+use std::fs::File;
+use std::io::{self, Read, Write};
 
 #[allow(dead_code)]
 pub struct Perceptron {
@@ -12,8 +15,26 @@ pub struct Perceptron {
 
 #[allow(dead_code)]
 impl Perceptron {
-    pub fn new(n: i32) -> Perceptron {
-        let weights = randfloat(-1.0, 1.0, n);
+    pub fn new(n: i32, seed: u64) -> Perceptron {
+        let weights = randfloat(-1.0, 1.0, n, seed);
+        let bias = 1.0;
+        let learning_rate = 0.01;
+        let epochs = 0;
+        let threshold = 0.5;
+        Perceptron {
+            weights,
+            bias,
+            learning_rate,
+            epochs,
+            threshold,
+        }
+    }
+
+    pub fn import(name: &str) -> Perceptron {
+        let mut file = File::open(name).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+        let weights: Vec<f64> = serde_json::from_str(&contents).unwrap();
         let bias = 1.0;
         let learning_rate = 0.01;
         let epochs = 0;
@@ -62,5 +83,11 @@ impl Perceptron {
         return w + self.learning_rate * (y - y_hat) as f64 * x;
     }
 
-    pub fn export(&self) {}
+    pub fn export(&self, name: &str) -> io::Result<()> {
+        let weights = serde_json::to_string(&self.weights).unwrap();
+        let mut file = File::create(name)?;
+        file.write_all(weights.as_bytes())?;
+        Ok(())
+    }
 }
+//
